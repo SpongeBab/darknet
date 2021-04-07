@@ -27,3 +27,4 @@ yolov4和darknetv4的区别讲完了。
 4.
    * 保存日志命令：`darknet.exe detector train cfg/coco.data cfg/yolov4.cfg yolov4.conv.137 >> log/yolov4-train.log`       
    * [可视化loss，绘制matlab图片](https://github.com/xiaoxiaopeng1998/darknet/tree/xiaoPeng/scripts/%E5%8F%AF%E8%A7%86%E5%8C%96)
+5. [yolov3&v4损失函数——yololayer.c解析](https://blog.csdn.net/qq_33614902/article/details/85063287)
