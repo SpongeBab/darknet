@@ -17,9 +17,11 @@ yolov4和darknetv4的区别讲完了。
 讲一下代码的主要不同。
 * AlexeyAB版darknet与原版的区别
 * 1.detection_layer.c->region_layer.c->yolo_layer.c(v4)。
-
-
-
+* 2.[最多可以检测目标]https://github.com/AlexeyAB/darknet/issues/3896
+* 3. [yolov3&v4损失函数——yololayer.c解析](https://blog.csdn.net/qq_33614902/article/details/85063287)
+* 4. [cfg文件参数含义](https://github.com/AlexeyAB/darknet/wiki/CFG-Parameters-in-the-different-layers)
+     [net]参数 （https://github.com/AlexeyAB/darknet/wiki/CFG-Parameters-in-the-%5Bnet%5D-section）
+ 
 ## 我的一些小改动
 1.对检测到的目标进行计数。  
 2.只检测人。   
@@ -27,7 +29,5 @@ yolov4和darknetv4的区别讲完了。
 4.
    * 保存日志命令：`darknet.exe detector train cfg/coco.data cfg/yolov4.cfg yolov4.conv.137 >> log/yolov4-train.log`       
    * [可视化loss，绘制matlab图片](https://github.com/xiaoxiaopeng1998/darknet/tree/xiaoPeng/scripts/%E5%8F%AF%E8%A7%86%E5%8C%96)
-5. [yolov3&v4损失函数——yololayer.c解析](https://blog.csdn.net/qq_33614902/article/details/85063287)
-6. [cfg文件参数含义](https://github.com/AlexeyAB/darknet/wiki/CFG-Parameters-in-the-different-layers)
-   [net]参数 （https://github.com/AlexeyAB/darknet/wiki/CFG-Parameters-in-the-%5Bnet%5D-section）
+
 
