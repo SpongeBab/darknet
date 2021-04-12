@@ -19,7 +19,7 @@ yolov4和darknetv4的区别讲完了。
 * 1.detection_layer.c->region_layer.c->yolo_layer.c(v4)。
 * 2.[最多可以检测目标]https://github.com/AlexeyAB/darknet/issues/3896
 * 3.[yolov3&v4损失函数——yololayer.c解析](https://blog.csdn.net/qq_33614902/article/details/85063287)
-* 4.[cfg文件参数含义](https://github.com/AlexeyAB/darknet/wiki/CFG-Parameters-in-the-different-layers)
+* 4.[cfg文件参数含义](https://github.com/AlexeyAB/darknet/wiki/CFG-Parameters-in-the-different-layers)     
        [net参数](https://github.com/AlexeyAB/darknet/wiki/CFG-Parameters-in-the-%5Bnet%5D-section)
  
 ## 我的一些小改动
