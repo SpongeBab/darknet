@@ -888,7 +888,7 @@ typedef struct dxrep {
 
 // box.h
 typedef struct ious {
-    float iou, giou, diou, ciou;
+    float iou, giou, diou, ciou, iog;
     dxrep dx_iou;
     dxrep dx_giou;
 } ious;

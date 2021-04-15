@@ -18,6 +18,8 @@ box float_to_box(float *f)
     return b;
 }
 
+//得到 真实框
+// f数组中顺序？
 box float_to_box_stride(float *f, int stride)
 {
     box b = { 0 };
@@ -255,6 +257,7 @@ float box_ciou(box a, box b)
     return iou - ciou_term;
 }
 
+//新的边界框回归损失函数
 dxrep dx_box_iou(box pred, box truth, IOU_LOSS iou_loss) {
  boxabs pred_tblr = to_tblr(pred);
     float pred_t = fmin(pred_tblr.top, pred_tblr.bot);
@@ -337,20 +340,23 @@ dxrep dx_box_iou(box pred, box truth, IOU_LOSS iou_loss) {
     p_dl = pred_tblr.left < pred_tblr.right ? p_dl : p_dr;
     p_dr = pred_tblr.left < pred_tblr.right ? p_dr : p_dl;
 
-    if (iou_loss == GIOU) {
-      if (giou_C > 0) {
-        // apply "C" term from gIOU
-        p_dt += ((giou_C * dU_wrt_t) - (U * dC_wrt_t)) / (giou_C * giou_C);
-        p_db += ((giou_C * dU_wrt_b) - (U * dC_wrt_b)) / (giou_C * giou_C);
-        p_dl += ((giou_C * dU_wrt_l) - (U * dC_wrt_l)) / (giou_C * giou_C);
-        p_dr += ((giou_C * dU_wrt_r) - (U * dC_wrt_r)) / (giou_C * giou_C);
-      }
-	  if (Iw<=0||Ih<=0) {
-		p_dt = ((giou_C * dU_wrt_t) - (U * dC_wrt_t)) / (giou_C * giou_C);
-        p_db = ((giou_C * dU_wrt_b) - (U * dC_wrt_b)) / (giou_C * giou_C);
-        p_dl = ((giou_C * dU_wrt_l) - (U * dC_wrt_l)) / (giou_C * giou_C);
-        p_dr = ((giou_C * dU_wrt_r) - (U * dC_wrt_r)) / (giou_C * giou_C);
-	  }
+    if (iou_loss == GIOU)
+    {
+        if (giou_C > 0)
+        {
+            // apply "C" term from gIOU
+            p_dt += ((giou_C * dU_wrt_t) - (U * dC_wrt_t)) / (giou_C * giou_C);
+            p_db += ((giou_C * dU_wrt_b) - (U * dC_wrt_b)) / (giou_C * giou_C);
+            p_dl += ((giou_C * dU_wrt_l) - (U * dC_wrt_l)) / (giou_C * giou_C);
+            p_dr += ((giou_C * dU_wrt_r) - (U * dC_wrt_r)) / (giou_C * giou_C);
+        }
+        if (Iw <= 0 || Ih <= 0)
+        {
+            p_dt = ((giou_C * dU_wrt_t) - (U * dC_wrt_t)) / (giou_C * giou_C);
+            p_db = ((giou_C * dU_wrt_b) - (U * dC_wrt_b)) / (giou_C * giou_C);
+            p_dl = ((giou_C * dU_wrt_l) - (U * dC_wrt_l)) / (giou_C * giou_C);
+            p_dr = ((giou_C * dU_wrt_r) - (U * dC_wrt_r)) / (giou_C * giou_C);
+        }
     }
 
     float Ct = fmin(pred.y - pred.h / 2,truth.y - truth.h / 2);

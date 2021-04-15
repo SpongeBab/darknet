@@ -472,7 +472,7 @@ layer parse_yolo(list *options, size_params params)
     l.delta_normalizer = option_find_float_quiet(options, "delta_normalizer", 1);
     char *iou_loss = option_find_str_quiet(options, "iou_loss", "mse");   //  "iou");
 
-    if (strcmp(iou_loss, "mse") == 0) l.iou_loss = MSE;
+    if (strcmp(iou_loss, "mse") == 0) l.iou_loss = MSE;  //均方误差
     else if (strcmp(iou_loss, "giou") == 0) l.iou_loss = GIOU;
     else if (strcmp(iou_loss, "diou") == 0) l.iou_loss = DIOU;
     else if (strcmp(iou_loss, "ciou") == 0) l.iou_loss = CIOU;
@@ -1604,14 +1604,15 @@ network parse_network_cfg_custom(char *filename, int batch, int time_steps)
         l.dontloadscales = option_find_int_quiet(options, "dontloadscales", 0);
         l.learning_rate_scale = option_find_float_quiet(options, "learning_rate", 1);
         option_unused(options);
-        net.layers[count] = l;
+
+        net.layers[count] = l; // 每个解析函数返回一个填充好的层l，将这些层全部添加到network结构体的layers数组中。
         if (l.workspace_size > workspace_size) workspace_size = l.workspace_size;
         if (l.inputs > max_inputs) max_inputs = l.inputs;
         if (l.outputs > max_outputs) max_outputs = l.outputs;
         free_section(s);
-        n = n->next;
+        n = n->next;// node节点前沿，empty则while-loop结束。
         ++count;
-        if(n){
+        if(n){// 这部分将连接的两个层之间的输入输出shape统一。
             if (l.antialiasing) {
                 params.h = l.input_layer->out_h;
                 params.w = l.input_layer->out_w;
@@ -1667,7 +1668,7 @@ network parse_network_cfg_custom(char *filename, int batch, int time_steps)
                 }
             }
 
-            net.layers[k] = l;
+            net.layers[k] = l;  
         }
     }
 #endif
@@ -1720,6 +1721,7 @@ network parse_network_cfg_custom(char *filename, int batch, int time_steps)
         printf("\n Warning: width=%d and height=%d in cfg-file must be divisible by 32 for default networks Yolo v1/v2/v3!!! \n\n",
             net.w, net.h);
     }
+    // 返回解析好的network类型的指针变量，这个指针变量会伴随训练的整个过程。
     return net;
 }
 
