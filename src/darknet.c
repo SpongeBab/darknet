@@ -483,39 +483,39 @@ int main(int argc, char **argv)
 
     if (0 == strcmp(argv[1], "average")){
         average(argc, argv);
-    } else if (0 == strcmp(argv[1], "yolo")){
-        run_yolo(argc, argv);
-    } else if (0 == strcmp(argv[1], "voxel")){
-        run_voxel(argc, argv);
-    } else if (0 == strcmp(argv[1], "super")){
-        run_super(argc, argv);
+    // } else if (0 == strcmp(argv[1], "yolo")){
+    //     run_yolo(argc, argv);
+    // } else if (0 == strcmp(argv[1], "voxel")){
+    //     run_voxel(argc, argv);
+    // } else if (0 == strcmp(argv[1], "super")){
+    //     run_super(argc, argv);
     } else if (0 == strcmp(argv[1], "detector")){
         run_detector(argc, argv);
-    } else if (0 == strcmp(argv[1], "detect")){
-        float thresh = find_float_arg(argc, argv, "-thresh", .24);
-		int ext_output = find_arg(argc, argv, "-ext_output");
-        char *filename = (argc > 4) ? argv[4]: 0;
-        test_detector("cfg/coco.data", argv[2], argv[3], filename, thresh, 0.5, 0, ext_output, 0, NULL, 0, 0);
-    } else if (0 == strcmp(argv[1], "cifar")){
-        run_cifar(argc, argv);
-    } else if (0 == strcmp(argv[1], "go")){
-        run_go(argc, argv);
-    } else if (0 == strcmp(argv[1], "rnn")){
-        run_char_rnn(argc, argv);
-    } else if (0 == strcmp(argv[1], "vid")){
-        run_vid_rnn(argc, argv);
-    } else if (0 == strcmp(argv[1], "coco")){
-        run_coco(argc, argv);
-    } else if (0 == strcmp(argv[1], "classify")){
-        predict_classifier("cfg/imagenet1k.data", argv[2], argv[3], argv[4], 5);
-    } else if (0 == strcmp(argv[1], "classifier")){
-        run_classifier(argc, argv);
-    } else if (0 == strcmp(argv[1], "art")){
-        run_art(argc, argv);
-    } else if (0 == strcmp(argv[1], "tag")){
-        run_tag(argc, argv);
-    } else if (0 == strcmp(argv[1], "compare")){
-        run_compare(argc, argv);
+    // } else if (0 == strcmp(argv[1], "detect")){
+    //     float thresh = find_float_arg(argc, argv, "-thresh", .24);
+	// 	int ext_output = find_arg(argc, argv, "-ext_output");
+    //     char *filename = (argc > 4) ? argv[4]: 0;
+    //     test_detector("cfg/coco.data", argv[2], argv[3], filename, thresh, 0.5, 0, ext_output, 0, NULL, 0, 0);
+    // } else if (0 == strcmp(argv[1], "cifar")){
+    //     run_cifar(argc, argv);
+    // } else if (0 == strcmp(argv[1], "go")){
+    //     run_go(argc, argv);
+    // } else if (0 == strcmp(argv[1], "rnn")){
+    //     run_char_rnn(argc, argv);
+    // } else if (0 == strcmp(argv[1], "vid")){
+    //     run_vid_rnn(argc, argv);
+    // } else if (0 == strcmp(argv[1], "coco")){
+    //     run_coco(argc, argv);
+    // } else if (0 == strcmp(argv[1], "classify")){
+    //     predict_classifier("cfg/imagenet1k.data", argv[2], argv[3], argv[4], 5);
+    // } else if (0 == strcmp(argv[1], "classifier")){
+    //     run_classifier(argc, argv);
+    // } else if (0 == strcmp(argv[1], "art")){
+    //     run_art(argc, argv);
+    // } else if (0 == strcmp(argv[1], "tag")){
+    //     run_tag(argc, argv);
+    // } else if (0 == strcmp(argv[1], "compare")){
+    //     run_compare(argc, argv);
     } else if (0 == strcmp(argv[1], "dice")){
         run_dice(argc, argv);
     } else if (0 == strcmp(argv[1], "writing")){

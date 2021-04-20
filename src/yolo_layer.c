@@ -227,7 +227,141 @@ static inline float clip_value(float val, const float max_val)
 // delta_yolo_box(truth, l.output, l.biases, l.mask[n], box_index, i, j, l.w, l.h, net.w, net.h, l.delta, (2-truth.w*truth.h), l.w*l.h);
 // 计算预测边界框的误差， 同时计算iou，giou,diou,ciou
 //truth 是第 t 个gt， x = l.output
-ious delta_yolo_box(box truth, float *x, float *biases, int n, int index, int i, int j, int lw, int lh, int w, int h, float *delta, float scale, int stride, float iou_normalizer, IOU_LOSS iou_loss, int accumulate, float max_delta, int *rewritten_bbox, int new_coords)
+// ious delta_yolo_box(box truth, float *x, float *biases, int n, int index, int i, int j, int lw, int lh, int w, int h, float *delta, float scale, int stride, float iou_normalizer, IOU_LOSS iou_loss, int accumulate, float max_delta, int *rewritten_bbox, int new_coords)
+// {
+//     if (delta[index + 0 * stride] || delta[index + 1 * stride] || delta[index + 2 * stride] || delta[index + 3 * stride])
+//     {
+//         (*rewritten_bbox)++; //如果当前框有delta， 即当前框为正样本，计数加一
+//     }
+
+//     ious all_ious = {0};
+//     // i - step in layer width
+//     // j - step in layer height
+//     //  Returns a box in absolute coordinates
+//     //scale = 2-truth.w*truth.h，比例系数，truth.w,truth.h都是相对整张图片归一化的值。是一个反比例函数，表示GT包围框越小，则网络的delta应该对偏差越敏感。
+//     box pred = get_yolo_box(x, biases, n, index, i, j, lw, lh, w, h, stride, new_coords);
+
+//     all_ious.iou = box_iou(pred, truth);
+//     all_ious.giou = box_giou(pred, truth);
+//     all_ious.diou = box_diou(pred, truth);
+//     all_ious.ciou = box_ciou(pred, truth);
+
+//     // avoid nan in dx_box_iou
+//     if (pred.w == 0)
+//     {
+//         pred.w = 1.0;
+//     }
+//     if (pred.h == 0)
+//     {
+//         pred.h = 1.0;
+//     }
+//     if (iou_loss == MSE) // old loss
+//     {
+//         //这里求解(tx,ty,tw,th)正好和get_yolo_box是一个相反的过程。将公式反过来推导一下就可以了。
+//         // 计算GT bbox的tx, ty, tw, th
+//         float tx = (truth.x * lw - i); //和预测值匹配
+//         float ty = (truth.y * lh - j);
+//         float tw = log(truth.w * w / biases[2 * n]); //log 使大框和小框的误差影响接近
+//         float th = log(truth.h * h / biases[2 * n + 1]);
+
+//         if (new_coords)
+//         {
+//             //tx = (truth.x*lw - i + 0.5) / 2;
+//             //ty = (truth.y*lh - j + 0.5) / 2;
+//             tw = sqrt(truth.w * w / (4 * biases[2 * n]));
+//             th = sqrt(truth.h * h / (4 * biases[2 * n + 1]));
+//         }
+
+//         //printf(" tx = %f, ty = %f, tw = %f, th = %f \n", tx, ty, tw, th);
+//         //printf(" x = %f, y = %f, w = %f, h = %f \n", x[index + 0 * stride], x[index + 1 * stride], x[index + 2 * stride], x[index + 3 * stride]);
+
+//         // accumulate delta
+//         delta[index + 0 * stride] += scale * (tx - x[index + 0 * stride]) * iou_normalizer;
+//         delta[index + 1 * stride] += scale * (ty - x[index + 1 * stride]) * iou_normalizer;
+//         delta[index + 2 * stride] += scale * (tw - x[index + 2 * stride]) * iou_normalizer;
+//         delta[index + 3 * stride] += scale * (th - x[index + 3 * stride]) * iou_normalizer;
+//     }
+//     else
+//     {
+//         // https://github.com/generalized-iou/g-darknet
+//         // https://arxiv.org/abs/1902.09630v2
+//         // https://giou.stanford.edu/
+//         all_ious.dx_iou = dx_box_iou(pred, truth, iou_loss);
+
+//         // jacobian^t (transpose)
+//         //float dx = (all_ious.dx_iou.dl + all_ious.dx_iou.dr);
+//         //float dy = (all_ious.dx_iou.dt + all_ious.dx_iou.db);
+//         //float dw = ((-0.5 * all_ious.dx_iou.dl) + (0.5 * all_ious.dx_iou.dr));
+//         //float dh = ((-0.5 * all_ious.dx_iou.dt) + (0.5 * all_ious.dx_iou.db));
+
+//         // jacobian^t (transpose)
+//         float dx = all_ious.dx_iou.dt;
+//         float dy = all_ious.dx_iou.db;
+//         float dw = all_ious.dx_iou.dl;
+//         float dh = all_ious.dx_iou.dr;
+
+//         // predict exponential, apply gradient of e^delta_t ONLY for w,h
+//         if (new_coords)
+//         {
+//             //dw *= 8 * x[index + 2 * stride];
+//             //dh *= 8 * x[index + 3 * stride];
+//             //dw *= 8 * x[index + 2 * stride] * biases[2 * n] / w;
+//             //dh *= 8 * x[index + 3 * stride] * biases[2 * n + 1] / h;
+
+//             //float grad_w = 8 * exp(-x[index + 2 * stride]) / pow(exp(-x[index + 2 * stride]) + 1, 3);
+//             //float grad_h = 8 * exp(-x[index + 3 * stride]) / pow(exp(-x[index + 3 * stride]) + 1, 3);
+//             //dw *= grad_w;
+//             //dh *= grad_h;
+//         }
+//         else
+//         {
+//             dw *= exp(x[index + 2 * stride]);
+//             dh *= exp(x[index + 3 * stride]);
+//         }
+
+//         //dw *= exp(x[index + 2 * stride]);
+//         //dh *= exp(x[index + 3 * stride]);
+
+//         // normalize iou weight
+//         dx *= iou_normalizer;
+//         dy *= iou_normalizer;
+//         dw *= iou_normalizer;
+//         dh *= iou_normalizer;
+
+//         dx = fix_nan_inf(dx);
+//         dy = fix_nan_inf(dy);
+//         dw = fix_nan_inf(dw);
+//         dh = fix_nan_inf(dh);
+
+//         if (max_delta != FLT_MAX)
+//         {
+//             dx = clip_value(dx, max_delta);
+//             dy = clip_value(dy, max_delta);
+//             dw = clip_value(dw, max_delta);
+//             dh = clip_value(dh, max_delta);
+//         }
+
+//         if (!accumulate)
+//         {
+//             delta[index + 0 * stride] = 0;
+//             delta[index + 1 * stride] = 0;
+//             delta[index + 2 * stride] = 0;
+//             delta[index + 3 * stride] = 0;
+//         }
+
+//         // accumulate delta
+//         delta[index + 0 * stride] += dx;
+//         delta[index + 1 * stride] += dy;
+//         delta[index + 2 * stride] += dw;
+//         delta[index + 3 * stride] += dh;
+//     }
+
+//     return all_ious;
+// }
+
+
+//new ious 
+ious delta_yolo_box(box truth_adjacent, box truth, float *x, float *biases, int n, int index, int i, int j, int lw, int lh, int w, int h, float *delta, float scale, int stride, float iou_normalizer, IOU_LOSS iou_loss, int accumulate, float max_delta, int *rewritten_bbox, int new_coords)
 {
     if (delta[index + 0 * stride] || delta[index + 1 * stride] || delta[index + 2 * stride] || delta[index + 3 * stride])
     {
@@ -245,8 +379,9 @@ ious delta_yolo_box(box truth, float *x, float *biases, int n, int index, int i,
     all_ious.giou = box_giou(pred, truth);
     all_ious.diou = box_diou(pred, truth);
     all_ious.ciou = box_ciou(pred, truth);
+    all_ious.iog = box_iog(pred, truth_adjacent);
 
-    // rep_truth =
+    // rep_truth = 
     // all_ious.rep_gt = box_iog(pred, rep_truth)
 
     //
@@ -270,8 +405,6 @@ ious delta_yolo_box(box truth, float *x, float *biases, int n, int index, int i,
 
         if (new_coords)
         {
-            //tx = (truth.x*lw - i + 0.5) / 2;
-            //ty = (truth.y*lh - j + 0.5) / 2;
             tw = sqrt(truth.w * w / (4 * biases[2 * n]));
             th = sqrt(truth.h * h / (4 * biases[2 * n + 1]));
         }
@@ -291,12 +424,6 @@ ious delta_yolo_box(box truth, float *x, float *biases, int n, int index, int i,
         // https://arxiv.org/abs/1902.09630v2
         // https://giou.stanford.edu/
         all_ious.dx_iou = dx_box_iou(pred, truth, iou_loss);
-
-        // jacobian^t (transpose)
-        //float dx = (all_ious.dx_iou.dl + all_ious.dx_iou.dr);
-        //float dy = (all_ious.dx_iou.dt + all_ious.dx_iou.db);
-        //float dw = ((-0.5 * all_ious.dx_iou.dl) + (0.5 * all_ious.dx_iou.dr));
-        //float dh = ((-0.5 * all_ious.dx_iou.dt) + (0.5 * all_ious.dx_iou.db));
 
         // jacobian^t (transpose)
         float dx = all_ious.dx_iou.dt;
@@ -323,8 +450,6 @@ ious delta_yolo_box(box truth, float *x, float *biases, int n, int index, int i,
             dh *= exp(x[index + 3 * stride]);
         }
 
-        //dw *= exp(x[index + 2 * stride]);
-        //dh *= exp(x[index + 3 * stride]);
 
         // normalize iou weight
         dx *= iou_normalizer;
@@ -362,7 +487,6 @@ ious delta_yolo_box(box truth, float *x, float *biases, int n, int index, int i,
 
     return all_ious;
 }
-
 void averages_yolo_deltas(int class_index, int box_index, int stride, int classes, float *delta)
 {
 
@@ -483,6 +607,7 @@ typedef struct train_yolo_args
     float tot_iou;
     float tot_giou_loss;
     float tot_iou_loss;
+    float tot_rep_loss;
     int count;
     int class_count;
 } train_yolo_args;
@@ -500,6 +625,7 @@ void *process_batch(void *ptr)
         //printf(" b = %d \n", b, b);
 
         //float tot_iou = 0;
+        float tot_iog = 0;
         float tot_giou = 0;
         float tot_diou = 0;
         float tot_ciou = 0;
@@ -542,6 +668,7 @@ void *process_batch(void *ptr)
                     { //和一张图片中所有的GT做IOU比较，只取一个IOU最高的匹配。
                         // 将第t个bbox由float数组转bbox结构体，方便计算IOU
                         box truth = float_to_box_stride(state.truth + t * l.truth_size + b * l.truths, 1);
+                        
                         if (!truth.x)
                             break;                                                       // continue;
                         int class_id = state.truth[t * l.truth_size + b * l.truths + 4]; // 获取第t个bbox的类别，检查是否有标注错误。
@@ -655,7 +782,7 @@ void *process_batch(void *ptr)
             // 将第t个b-box由float数组转b-box结构体,方便计算IOU
             box truth = float_to_box_stride(state.truth + t * l.truth_size + b * l.truths, 1);
 
-            box next_truth = float_to_box_stride(state.truth + (t+1) * l.truth_size + b * l.truths, 1);
+            box truth_adjacent = float_to_box_stride(state.truth + (t + 1) * l.truth_size + b * l.truths, 1);
             if (!truth.x)
                 break; // continue;
             if (truth.x < 0 || truth.y < 0 || truth.x > 1 || truth.y > 1 || truth.w < 0 || truth.h < 0)
@@ -703,8 +830,9 @@ void *process_batch(void *ptr)
                 
                 //以每张图的GT作为基准。先找到与GT有最大IOU的pre box，然后计算其产生的损失。有可能这个pre box产生的损失已经计算过了，又重新计算了一遍。
                 //truth是原图中的第 t 个ground_truth  //计算定位损失
-                ious all_ious = delta_yolo_box(truth, l.output, l.biases, best_n, box_index, i, j, l.w, l.h, state.net.w, state.net.h, l.delta, (2 - truth.w * truth.h), l.w * l.h, l.iou_normalizer * class_multiplier, l.iou_loss, 1, l.max_delta, state.net.rewritten_bbox, l.new_coords);
-                //ious all_ious = delta_yolo_box(truth_adjacent, truth, l.output, l.biases, best_n, box_index, i, j, l.w, l.h, state.net.w, state.net.h, l.delta, (2 - truth.w * truth.h), l.w * l.h, l.iou_normalizer * class_multiplier, l.iou_loss, 1, l.max_delta, state.net.rewritten_bbox, l.new_coords);
+                //ious all_ious = delta_yolo_box(truth, l.output, l.biases, best_n, box_index, i, j, l.w, l.h, state.net.w, state.net.h, l.delta, (2 - truth.w * truth.h), l.w * l.h, l.iou_normalizer * class_multiplier, l.iou_loss, 1, l.max_delta, state.net.rewritten_bbox, l.new_coords);
+                // new
+                ious all_ious = delta_yolo_box(truth_adjacent, truth, l.output, l.biases, best_n, box_index, i, j, l.w, l.h, state.net.w, state.net.h, l.delta, (2 - truth.w * truth.h), l.w * l.h, l.iou_normalizer * class_multiplier, l.iou_loss, 1, l.max_delta, state.net.rewritten_bbox, l.new_coords);
                 (*state.net.total_bbox)++;
 
                 const int truth_in_index = t * l.truth_size + b * l.truths + 5;
@@ -775,7 +903,8 @@ void *process_batch(void *ptr)
 
                         int box_index = entry_index(l, b, mask_n * l.w * l.h + j * l.w + i, 0);
                         const float class_multiplier = (l.classes_multipliers) ? l.classes_multipliers[class_id] : 1.0f;
-                        ious all_ious = delta_yolo_box(truth, l.output, l.biases, n, box_index, i, j, l.w, l.h, state.net.w, state.net.h, l.delta, (2 - truth.w * truth.h), l.w * l.h, l.iou_normalizer * class_multiplier, l.iou_loss, 1, l.max_delta, state.net.rewritten_bbox, l.new_coords);
+                        
+                        ious all_ious = delta_yolo_box(truth_adjacent, truth, l.output, l.biases, n, box_index, i, j, l.w, l.h, state.net.w, state.net.h, l.delta, (2 - truth.w * truth.h), l.w * l.h, l.iou_normalizer * class_multiplier, l.iou_loss, 1, l.max_delta, state.net.rewritten_bbox, l.new_coords);
                         (*state.net.total_bbox)++;
 
                         // range is 0 <= 1
@@ -790,6 +919,9 @@ void *process_batch(void *ptr)
 
                         tot_ciou += all_ious.ciou;
                         tot_ciou_loss += 1 - all_ious.ciou;
+
+                        tot_iog += all_ious.iog;
+                        args->tot_rep_loss += 1-all_ious.iog;
 
                         int obj_index = entry_index(l, b, mask_n * l.w * l.h + j * l.w + i, 4);
                         avg_obj += l.output[obj_index];
@@ -885,10 +1017,12 @@ void forward_yolo_layer(const layer l, network_state state)
     float tot_giou = 0;
     float tot_diou = 0;
     float tot_ciou = 0;
+    float tot_iog = 0;
     float tot_iou_loss = 0;
     float tot_giou_loss = 0;
     float tot_diou_loss = 0;
     float tot_ciou_loss = 0;
+    float tot_rep_loss = 0;
     float recall = 0;
     float recall75 = 0;
     float avg_cat = 0;
@@ -926,6 +1060,7 @@ void forward_yolo_layer(const layer l, network_state state)
         tot_iou += yolo_args[b].tot_iou;
         tot_iou_loss += yolo_args[b].tot_iou_loss;
         tot_giou_loss += yolo_args[b].tot_giou_loss;
+        tot_rep_loss += yolo_args[b].tot_rep_loss;
         count += yolo_args[b].count;
         class_count += yolo_args[b].class_count;
     }
@@ -1075,7 +1210,6 @@ void forward_yolo_layer(const layer l, network_state state)
     else
     { //默认为1 展示更多细节
         // show detailed output
-
         int stride = l.w * l.h;
         float *no_iou_loss_delta = (float *)calloc(l.batch * l.outputs, sizeof(float));
         memcpy(no_iou_loss_delta, l.delta, l.batch * l.outputs * sizeof(float));
@@ -1102,8 +1236,9 @@ void forward_yolo_layer(const layer l, network_state state)
         float classification_loss = l.obj_normalizer * pow(mag_array(no_iou_loss_delta, l.outputs * l.batch), 2);
         free(no_iou_loss_delta);
         float loss = pow(mag_array(l.delta, l.outputs * l.batch), 2); //loss * batch
-        float iou_loss = loss - classification_loss;
+        float iou_loss = loss - classification_loss - tot_rep_loss;
 
+        float avg_rep_loss = 0;
         float avg_iou_loss = 0;
         *(l.cost) = loss;
 
@@ -1122,17 +1257,21 @@ void forward_yolo_layer(const layer l, network_state state)
             {
                 avg_iou_loss = count > 0 ? l.iou_normalizer * (tot_giou_loss / count) : 0; //count = batch
             }
-            else
+            else if(l.iou_loss == CIOU)
             {
                 avg_iou_loss = count > 0 ? l.iou_normalizer * (tot_iou_loss / count) : 0;
             }
+            
+            avg_rep_loss = count > 0 ? l.iou_normalizer * (tot_rep_loss / count) :0;
+            
             //损失等于 iou + 分类损失   //iou =  边界框回归损失
-            *(l.cost) = avg_iou_loss + classification_loss;
+            *(l.cost) = avg_iou_loss + classification_loss + avg_rep_loss;
         }
 
         loss /= l.batch;
         classification_loss /= l.batch;
         iou_loss /= l.batch;
+        //rep_loss /= l.batch;
 
         fprintf(stderr, "v3 (%s loss, Normalizer: (iou: %.2f, obj: %.2f, cls: %.2f) Region %d Avg (IOU: %f), count: %d, class_loss = %f, iou_loss = %f, total_loss = %f \n",
                 (l.iou_loss == MSE ? "mse" : (l.iou_loss == GIOU ? "giou" : "iou")), l.iou_normalizer, l.obj_normalizer, l.cls_normalizer, state.index, tot_iou / count, count, classification_loss, iou_loss, loss);

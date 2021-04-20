@@ -20,7 +20,8 @@ yolov4和darknetv4的区别讲完了。
 * 2.[最多可以检测目标]https://github.com/AlexeyAB/darknet/issues/3896
 * 3.[yolov3&v4损失函数——yololayer.c解析](https://blog.csdn.net/qq_33614902/article/details/85063287)
 * 4.[cfg文件参数含义](https://github.com/AlexeyAB/darknet/wiki/CFG-Parameters-in-the-different-layers)  
-     [net参数](https://github.com/AlexeyAB/darknet/wiki/CFG-Parameters-in-the-%5Bnet%5D-section)
+    [net参数](https://github.com/AlexeyAB/darknet/wiki/CFG-Parameters-in-the-%5Bnet%5D-section)
+
  
 ## 我的一些小改动
 1.对检测到的目标进行计数。  
@@ -31,3 +32,5 @@ yolov4和darknetv4的区别讲完了。
    * [可视化loss，绘制matlab图片](https://github.com/xiaoxiaopeng1998/darknet/tree/xiaoPeng/scripts/%E5%8F%AF%E8%A7%86%E5%8C%96)
 
 
+对理解程序有帮助的issues：
+* [How many objects are detectable in Yolo](https://github.com/AlexeyAB/darknet/issues/3896#)
