@@ -2,8 +2,6 @@
 ## 目的
 这个项目是对AlexeyAB版darknet源代码的分析。本项目基于/hgpvision/darknet的[项目](https://github.com/hgpvision/darknet) 感谢👏。虽然已不再更新，但是也非常厉害了。
 * 本项目最初的目的是对c版yolov4进行分析，但无奈导师一天一个任务，只能先搁置此项目了。
-
-
 * 获取更多关于yolov4的详细信息，请参考官方链接：[darknet](https://github.com/AlexeyAB/darknet)
 
 ------
@@ -17,11 +15,19 @@ yolov4和darknetv4的区别讲完了。
 讲一下代码的主要不同。
 * AlexeyAB版darknet与原版的区别
 * 1.detection_layer.c->region_layer.c->yolo_layer.c(v4)。
-* 2.[最多可以检测目标]https://github.com/AlexeyAB/darknet/issues/3896
+* 2.[最多可以检测目标](https://github.com/AlexeyAB/darknet/issues/3896)
 * 3.[yolov3&v4损失函数——yololayer.c解析](https://blog.csdn.net/qq_33614902/article/details/85063287)
 * 4.[cfg文件参数含义](https://github.com/AlexeyAB/darknet/wiki/CFG-Parameters-in-the-different-layers)  
     [net参数](https://github.com/AlexeyAB/darknet/wiki/CFG-Parameters-in-the-%5Bnet%5D-section)
-
+    
+## 已注释代码
+1.主函数。（darknet.c）
+2.训练，测试，计算map（detector.c)
+3.加载cfg文件函数（parser.c)
+4.加载网络。（network.c)(包括卷积，池化，下采样，上采样，route，shorcut，yolo等）
+5.最重要的损失函数，(yolo_layer.c)
+6.计算ciou（box.c)
+7.NMS。
  
 ## 我的一些小改动
 1.对检测到的目标进行计数。  
