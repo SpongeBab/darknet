@@ -32,8 +32,8 @@ yolov4和darknetv4的区别讲完了。
 2.训练，测试，计算map（detector.c)
 3.加载cfg文件函数（parser.c)
 4.加载网络。（network.c)(包括卷积，池化，下采样，上采样，route，shorcut，yolo等）
-5.最重要的损失函数，(yolo_layer.c)
-6.计算ciou（box.c)
+5.最重要的损失函数。(yolo_layer.c)
+6.iou,ciou，giou,diou,以及改进的iog（box.c)
 7.NMS。
  
 ## 我的一些小改动
