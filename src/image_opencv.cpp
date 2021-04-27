@@ -888,8 +888,13 @@ extern "C" void draw_detections_cv_v3(mat_cv* mat, detection *dets, int num, flo
             char labelstr[4096] = { 0 };
             int class_id = -1;
             for (j = 0; j < classes; ++j) {
+                
                 int show = strncmp(names[j], "dont_show", 9);
                 if (dets[i].prob[j] > thresh && show) {
+                    // if (j!=0)
+                    // {
+                    //     continue;//只检测人，使用官方版本的修改
+                    // }
                     if (class_id < 0) {
                         strcat(labelstr, names[j]);
                         class_id = j;
