@@ -220,91 +220,6 @@ extern "C" void release_mat(mat_cv **mat)
     }
 }
 
-// ====================================================================
-// IplImage
-// ====================================================================
-/*
-extern "C" int get_width_cv(mat_cv *ipl_src)
-{
-    IplImage *ipl = (IplImage *)ipl_src;
-    return ipl->width;
-}
-// ----------------------------------------
-
-extern "C" int get_height_cv(mat_cv *ipl_src)
-{
-    IplImage *ipl = (IplImage *)ipl_src;
-    return ipl->height;
-}
-// ----------------------------------------
-
-extern "C" void release_ipl(mat_cv **ipl)
-{
-    IplImage **ipl_img = (IplImage **)ipl;
-    if (*ipl_img) cvReleaseImage(ipl_img);
-    *ipl_img = NULL;
-}
-// ----------------------------------------
-
-// ====================================================================
-// image-to-ipl, ipl-to-image, image_to_mat, mat_to_image
-// ====================================================================
-
-extern "C" mat_cv *image_to_ipl(image im)
-{
-    int x, y, c;
-    IplImage *disp = cvCreateImage(cvSize(im.w, im.h), IPL_DEPTH_8U, im.c);
-    int step = disp->widthStep;
-    for (y = 0; y < im.h; ++y) {
-        for (x = 0; x < im.w; ++x) {
-            for (c = 0; c < im.c; ++c) {
-                float val = im.data[c*im.h*im.w + y*im.w + x];
-                disp->imageData[y*step + x*im.c + c] = (unsigned char)(val * 255);
-            }
-        }
-    }
-    return (mat_cv *)disp;
-}
-// ----------------------------------------
-
-extern "C" image ipl_to_image(mat_cv* src_ptr)
-{
-    IplImage* src = (IplImage*)src_ptr;
-    int h = src->height;
-    int w = src->width;
-    int c = src->nChannels;
-    image im = make_image(w, h, c);
-    unsigned char *data = (unsigned char *)src->imageData;
-    int step = src->widthStep;
-    int i, j, k;
-
-    for (i = 0; i < h; ++i) {
-        for (k = 0; k < c; ++k) {
-            for (j = 0; j < w; ++j) {
-                im.data[k*w*h + i*w + j] = data[i*step + j*c + k] / 255.;
-            }
-        }
-    }
-    return im;
-}
-// ----------------------------------------
-
-cv::Mat ipl_to_mat(IplImage *ipl)
-{
-    Mat m = cvarrToMat(ipl, true);
-    return m;
-}
-// ----------------------------------------
-
-IplImage *mat_to_ipl(cv::Mat mat)
-{
-    IplImage *ipl = new IplImage;
-    *ipl = mat;
-    return ipl;
-}
-// ----------------------------------------
-*/
-
 extern "C" cv::Mat image_to_mat(image img)
 {
     int channels = img.c;
@@ -538,40 +453,6 @@ extern "C" void release_video_writer(write_cv **output_video_writer)
         cerr << "OpenCV exception: release_video_writer \n";
     }
 }
-
-/*
-extern "C" void *open_video_stream(const char *f, int c, int w, int h, int fps)
-{
-    VideoCapture *cap;
-    if(f) cap = new VideoCapture(f);
-    else cap = new VideoCapture(c);
-    if(!cap->isOpened()) return 0;
-    if(w) cap->set(CV_CAP_PROP_FRAME_WIDTH, w);
-    if(h) cap->set(CV_CAP_PROP_FRAME_HEIGHT, w);
-    if(fps) cap->set(CV_CAP_PROP_FPS, w);
-    return (void *) cap;
-}
-
-
-extern "C" image get_image_from_stream(void *p)
-{
-    VideoCapture *cap = (VideoCapture *)p;
-    Mat m;
-    *cap >> m;
-    if(m.empty()) return make_empty_image(0,0,0);
-    return mat_to_image(m);
-}
-
-extern "C" int show_image_cv(image im, const char* name, int ms)
-{
-    Mat m = image_to_mat(im);
-    imshow(name, m);
-    int c = waitKey(ms);
-    if (c != -1) c = c%256;
-    return c;
-}
-*/
-
 
 // ====================================================================
 // Video Capture
@@ -888,6 +769,11 @@ extern "C" void draw_detections_cv_v3(mat_cv* mat, detection *dets, int num, flo
             char labelstr[4096] = { 0 };
             int class_id = -1;
             for (j = 0; j < classes; ++j) {
+                //视频中只检测人
+                // if (j != 0)
+                // {
+                //     continue;
+                // }
                 int show = strncmp(names[j], "dont_show", 9);
                 if (dets[i].prob[j] > thresh && show) {
                     if (class_id < 0) {
