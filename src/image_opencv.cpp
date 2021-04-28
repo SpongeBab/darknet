@@ -765,38 +765,56 @@ extern "C" void draw_detections_cv_v3(mat_cv* mat, detection *dets, int num, flo
         static int frame_id = 0;
         frame_id++;
 
-        for (i = 0; i < num; ++i) {
-            char labelstr[4096] = { 0 };
+        int count_person = 0; // 计数变量
+        for (i = 0; i < num; ++i)
+        {
+            char labelstr[4096] = {0}; //保存标签文字的字符串
+            char countstr[1000] = {0}; //保存计数字符串
             int class_id = -1;
             for (j = 0; j < classes; ++j) {
                 //视频中只检测人
-                // if (j != 0)
-                // {
-                //     continue;
-                // }
+                if (j != 0)
+                {
+                    continue;
+                }
+
                 int show = strncmp(names[j], "dont_show", 9);
-                if (dets[i].prob[j] > thresh && show) {
+                if (dets[i].prob[j] > thresh && show) //三个锚框具有最大置信度的那个
+                {
+                    // 检测出一个人
                     if (class_id < 0) {
-                        strcat(labelstr, names[j]);
+
+                        strcat(labelstr, names[j]); //先把标签名字放进标签字符串  strcat，字符串拼接
+                        strcat(countstr, names[j]); //把所统计的类别放入统计字符串
                         class_id = j;
                         char buff[20];
-                        if (dets[i].track_id) {
+                        if (dets[i].track_id)
+                        {
                             sprintf(buff, " (id: %d)", dets[i].track_id);
                             strcat(labelstr, buff);
                         }
-                        sprintf(buff, " (%2.0f%%)", dets[i].prob[j] * 100);
-                        strcat(labelstr, buff);
+                        sprintf(buff, " (%2.0f%%)", dets[i].prob[j] * 100); //发送格式化输出到 第一个参数 所指向的字符串
+                        strcat(labelstr, buff);                             //格式化的置信度放入标签字符串
                         printf("%s: %.0f%% ", names[j], dets[i].prob[j] * 100);
-                        if (dets[i].track_id) printf("(track = %d, sim = %f) ", dets[i].track_id, dets[i].sim);
+                        count_person += 1;  
+                        printf("%d", count_person);  //只有这样才正常计数
+                        if (dets[i].track_id)
+                            printf("(track = %d, sim = %f) ", dets[i].track_id, dets[i].sim);
                     }
                     else {
                         strcat(labelstr, ", ");
                         strcat(labelstr, names[j]);
-                        printf(", %s: %.0f%% ", names[j], dets[i].prob[j] * 100);
+                        printf(", %s: %.0f%% ", names[j], dets[i].prob[j] * 100); //
                     }
                 }
+                
             }
-            if (class_id >= 0) {
+            
+            // char buff2[40];
+            // sprintf(buff2, "%d", count_person);
+            // strcat(countstr, buff2);
+            if (class_id >= 0)
+            {
                 int width = std::max(1.0f, show_img->rows * .002f);
 
                 //if(0){
@@ -810,8 +828,6 @@ extern "C" void draw_detections_cv_v3(mat_cv* mat, detection *dets, int num, flo
                 float green = get_color(1, offset, classes);
                 float blue = get_color(0, offset, classes);
                 float rgb[3];
-
-                //width = prob*20+2;
 
                 rgb[0] = red;
                 rgb[1] = green;
@@ -846,6 +862,7 @@ extern "C" void draw_detections_cv_v3(mat_cv* mat, detection *dets, int num, flo
                 float const font_size = show_img->rows / 1000.F;
                 cv::Size const text_size = cv::getTextSize(labelstr, cv::FONT_HERSHEY_COMPLEX_SMALL, font_size, 1, 0);
                 cv::Point pt1, pt2, pt_text, pt_text_bg1, pt_text_bg2;
+                cv::Point2d pt_count;
                 pt1.x = left;
                 pt1.y = top;
                 pt2.x = right;
@@ -853,10 +870,13 @@ extern "C" void draw_detections_cv_v3(mat_cv* mat, detection *dets, int num, flo
                 pt_text.x = left;
                 pt_text.y = top - 4;// 12;
                 pt_text_bg1.x = left;
-                pt_text_bg1.y = top - (3 + 18 * font_size);
-                pt_text_bg2.x = right;
+                pt_text_bg1.y = top - (3 + 18 * font_size); //因为在opencv中往下为增大，左上角坐标应该减去 一定值
+                pt_text_bg2.x = right;                      //右下角
                 if ((right - left) < text_size.width) pt_text_bg2.x = left + text_size.width;
-                pt_text_bg2.y = top;
+                pt_text_bg2.y = top; //标签文字框右下角坐标
+                pt_count.x = 100;    //计数字符串标签位置
+                pt_count.y = 100;
+
                 cv::Scalar color;
                 color.val[0] = red * 256;
                 color.val[1] = green * 256;
@@ -891,8 +911,12 @@ extern "C" void draw_detections_cv_v3(mat_cv* mat, detection *dets, int num, flo
                 cv::Scalar black_color = CV_RGB(0, 0, 0);
                 cv::putText(*show_img, labelstr, pt_text, cv::FONT_HERSHEY_COMPLEX_SMALL, font_size, black_color, 2 * font_size, CV_AA);
                 // cv::FONT_HERSHEY_COMPLEX_SMALL, cv::FONT_HERSHEY_SIMPLEX
-            }
+            }    
         }
+        //要加到循环外面，一个循环完成才能检测出所有的人的数量。
+        int count_result = count_person;
+        std::string s = std::to_string(count_result);
+        cv::putText(*show_img, s, cv::Point(0,100), cv::FONT_HERSHEY_PLAIN, 6, CV_RGB(255,255,0), 4, cv::LINE_4);
         if (ext_output) {
             fflush(stdout);
         }
