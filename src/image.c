@@ -293,6 +293,11 @@ detection_with_class* get_actual_detections(detection *dets, int dets_num, float
         float best_class_prob = thresh;
         int j;
         for (j = 0; j < dets[i].classes; ++j) {
+            //only detect person,一种取巧的方式，只画人的框
+            // if (j != 0)
+            // {
+            //     continue;
+            // }
             int show = strncmp(names[j], "dont_show", 9);
             if (dets[i].prob[j] > best_class_prob && show) {
                 best_class = j;
