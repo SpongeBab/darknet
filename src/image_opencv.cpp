@@ -915,8 +915,8 @@ extern "C" void draw_detections_cv_v3(mat_cv* mat, detection *dets, int num, flo
         }
         //要加到循环外面，一个循环完成才能检测出所有的人的数量。
         int count_result = count_person;
-        std::string s = std::to_string(count_result);
-        cv::putText(*show_img, s, cv::Point(0,100), cv::FONT_HERSHEY_PLAIN, 6, CV_RGB(255,255,0), 4, cv::LINE_4);
+        std::string countstr = std::to_string(count_result);
+        cv::putText(*show_img, countstr, cv::Point(0, 100), cv::FONT_HERSHEY_PLAIN, 6, CV_RGB(255, 255, 0), 4, cv::LINE_4);
         if (ext_output) {
             fflush(stdout);
         }
