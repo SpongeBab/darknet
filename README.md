@@ -8,7 +8,7 @@
 * 逐步实现了repolusion_loss(已实现！[darknrt_with_repo](https://github.com/SpongeBab/darknet/tree/local)）
 
 ## TODO
-1.-[x] repulison_loss （done)  （经过实现发现，Repulsion Loss是一个只适用于两阶段检测器的损失函数，使用在yolo中会让yolo完全崩溃。你可以使用我的代码去测试。有任何不同意见都可以提交issue。）
+1. - [x] repulison_loss （done)  （经过实现发现，Repulsion Loss是一个只适用于两阶段检测器的损失函数，使用在yolo中会让yolo完全崩溃。你可以使用我的代码去测试。有任何不同意见都可以提交issue。）
 2.- 改进YOLOv4，提高mAP。
 
 
@@ -36,7 +36,7 @@ yolov4和darknetv4的区别讲完了。
 6.iou,ciou，giou,diou,以及改进的iog（box.c)
 7.NMS。
  
-## 我的一些小改动
+## 我的一些小改
 1.对检测到的目标进行计数。  
 2.只检测人。   
 3.[提交了一些准备训练数据的脚本](https://github.com/xiaoxiaopeng1998/darknet/tree/xiaoPeng/scripts/%E8%AE%AD%E7%BB%83%E5%87%86%E5%A4%87)     
