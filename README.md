@@ -9,7 +9,7 @@
 
 ## TODO
 1. - [x] repulison_loss （done)  （经过实现发现，Repulsion Loss是一个只适用于两阶段检测器的损失函数，使用在yolo中会让yolo完全崩溃。你可以使用我的代码去测试。有任何不同意见都可以提交issue。）  
-2.- 改进YOLOv4，提高mAP。
+2.改进YOLOv4，提高mAP。
 
 
 为了方便区分，我们将最初的[pjreddie/darknet](https://github.com/pjreddie/darknet)称为darknet。将AlexeyAB版的darknet称为yolov4。
