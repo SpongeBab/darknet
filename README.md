@@ -1,15 +1,15 @@
-# darknet_with_repulsion_loss
-------
+
+---
 * 关于yolov4的详细信息,官方链接：[darknet](https://github.com/AlexeyAB/darknet)
------
-## 目的
+---
+# 目的
 这个项目是对AlexeyAB版darknet源代码的分析。本项目基于/hgpvision/darknet的[项目](https://github.com/hgpvision/darknet) 感谢👏。虽然已不再更新，但是也非常厉害了。
 * 本项目最初的目的是对c版yolov4进行分析。
 * 逐步实现了repolusion_loss(已实现！[darknrt_with_repo](https://github.com/SpongeBab/darknet/tree/local)）
 
-# TODO
-1.repulison_loss （done)
-
+## TODO
+1.- in [x]repulison_loss （done)
+2.- 改进YOLOv4，提高mAP。
 
 
 为了方便区分，我们将最初的[pjreddie/darknet](https://github.com/pjreddie/darknet)称为darknet。将AlexeyAB版的darknet称为yolov4。
