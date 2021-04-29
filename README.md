@@ -8,7 +8,7 @@
 * 逐步实现了repolusion_loss(已实现！[darknrt_with_repo](https://github.com/SpongeBab/darknet/tree/local)）
 
 ## TODO
-1. - [x] repulison_loss （done)  （经过实现发现，Repulsion Loss是一个只适用于两阶段检测器的损失函数，使用在yolo中会让yolo完全崩溃。你可以使用我的代码去测试。有任何不同意见都可以提交issue。）
+1. - [x] repulison_loss （done)  （经过实现发现，Repulsion Loss是一个只适用于两阶段检测器的损失函数，使用在yolo中会让yolo完全崩溃。你可以使用我的代码去测试。有任何不同意见都可以提交issue。）  
 2.- 改进YOLOv4，提高mAP。
 
 
