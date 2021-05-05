@@ -917,7 +917,7 @@ extern "C" void draw_detections_cv_v3(mat_cv* mat, detection *dets, int num, flo
         int count_result = count_person;
         std::string countstr = std::to_string(count_result);
         countstr = "personnum:" + countstr;
-        cv::putText(*show_img, countstr, cv::Point(0, 200), cv::FONT_HERSHEY_PLAIN, 5, CV_RGB(255, 255, 0), 4, cv::LINE_4);
+        cv::putText(*show_img, countstr, cv::Point(0, 100), cv::FONT_HERSHEY_PLAIN, 3, CV_RGB(255, 255, 0), 3, cv::LINE_4);
         if (ext_output) {
             fflush(stdout);
         }
