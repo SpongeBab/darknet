@@ -58,9 +58,7 @@ layer make_yolo_layer(int batch, int w, int h, int n, int total, int *mask, int 
     for (i = 0; i < batch * l.w * l.h * l.n; ++i)
         l.class_ids[i] = -1;
 
-    // yolo层误差项，包含整个batch的。一个batch的loss
-    //第i张图片的delta   大小为 batch * (h * w * n * (4+1+classes))    l.delta[i]
-    l.delta = (float *)xcalloc(batch * l.outputs, sizeof(float));
+    l.delta = (float *)xcalloc(batch * l.outputs, sizeof(float));  // yolo层误差项，包含整个batch的。一个batch的loss ,第i张图片的delta   大小为 batch * (h * w * n * (4+1+classes))    l.delta[i]
     l.output = (float *)xcalloc(batch * l.outputs, sizeof(float)); // yolo层所有输出，包含整个batch的。一张图片是outputs, 整个batch的 batch * outputs
     for (i = 0; i < total * 2; ++i)
     { /* 存储b-box的Anchor box的[w,h]的初始化，在parse.c中parse_yolo函数会加载cfg中Anchor尺寸。*/
@@ -783,7 +781,7 @@ void *process_batch(void *ptr)
             // 将第t个b-box由float数组转b-box结构体,方便计算IOU
             box truth = float_to_box_stride(state.truth + t * l.truth_size + b * l.truths, 1);
 
-            box truth_adjacent = float_to_box_stride(state.truth + (t + 1) * l.truth_size + b * l.truths, 1);
+            box truth_adjacent = float_to_box_stride(state.truth + (t + 1) * l.truth_size + (b + 1) * l.truths, 1);
             if (!truth.x)
                 break; // continue;
             if (truth.x < 0 || truth.y < 0 || truth.x > 1 || truth.y > 1 || truth.w < 0 || truth.h < 0)
