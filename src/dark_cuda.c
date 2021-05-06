@@ -122,7 +122,7 @@ static int streamInit[16] = { 0 };
 cudaStream_t get_cuda_stream() {
     int i = cuda_get_device();
     if (!streamInit[i]) {
-        printf("Create CUDA-stream - %d \n", i);
+        printf("Create CUDA-stream - %d GPU.\n", i);
         //cudaError_t status = cudaStreamCreate(&streamsArray[i], cudaStreamNonBlocking);
         cudaError_t status = cudaStreamCreateWithFlags(&streamsArray[i], cudaStreamNonBlocking);
         if (status != cudaSuccess) {
@@ -172,7 +172,7 @@ cudnnHandle_t cudnn_handle()
         cudnnInit[i] = 1;
         cudnnStatus_t status = cudnnSetStream(cudnnHandle[i], get_cuda_stream());
         CHECK_CUDNN(status);
-        printf(" Create cudnn-handle %d \n", i);
+        printf(" Create cudnn-handle %d GPU.\n", i);
     }
     return cudnnHandle[i];
 }
