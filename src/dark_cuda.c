@@ -361,8 +361,8 @@ void pre_allocate_pinned_memory(const size_t size)
         pinned_ptr = (float **)calloc(num_of_blocks, sizeof(float *));
         if(!pinned_ptr) error("calloc failed in pre_allocate() \n");
 
-        printf("pre_allocate: size = %Iu MB, num_of_blocks = %Iu, block_size = %Iu MB \n",
-            size / (1024*1024), num_of_blocks, pinned_block_size / (1024 * 1024));
+        printf("pre_allocate: size = %Ilu MB, num_of_blocks = %Ilu, block_size = %Ilu MB \n",
+               size / (1024 * 1024), num_of_blocks, pinned_block_size / (1024 * 1024));
 
         int k;
         for (k = 0; k < num_of_blocks; ++k) {
@@ -371,7 +371,7 @@ void pre_allocate_pinned_memory(const size_t size)
             CHECK_CUDA(status);
             if (!pinned_ptr[k]) error("cudaHostAlloc failed\n");
             else {
-                printf(" Allocated %d pinned block \n", pinned_block_size);
+                printf(" Allocated %ld pinned block \n", pinned_block_size);
             }
         }
         pinned_num_of_blocks = num_of_blocks;
@@ -392,7 +392,7 @@ float *cuda_make_array_pinned_preallocated(float *x, size_t n)
     {
         if ((allocation_size + pinned_index) > pinned_block_size) {
             const float filled = (float)100 * pinned_index / pinned_block_size;
-            printf("\n Pinned block_id = %d, filled = %f %% \n", pinned_block_id, filled);
+            printf("\n Pinned block_id = %ld, filled = %f %% \n", pinned_block_id, filled);
             pinned_block_id++;
             pinned_index = 0;
         }
@@ -407,13 +407,13 @@ float *cuda_make_array_pinned_preallocated(float *x, size_t n)
 
     if(!x_cpu) {
         if (allocation_size > pinned_block_size / 2) {
-            printf("Try to allocate new pinned memory, size = %d MB \n", size / (1024 * 1024));
+            printf("Try to allocate new pinned memory, size = %ld MB \n", size / (1024 * 1024));
             cudaError_t status = cudaHostAlloc((void **)&x_cpu, size, cudaHostRegisterMapped);
             if (status != cudaSuccess) fprintf(stderr, " Can't allocate CUDA-pinned memory on CPU-RAM (pre-allocated memory is over too) \n");
             CHECK_CUDA(status);
         }
         else {
-            printf("Try to allocate new pinned BLOCK, size = %d MB \n", size / (1024 * 1024));
+            printf("Try to allocate new pinned BLOCK, size = %ld MB \n", size / (1024 * 1024));
             pinned_num_of_blocks++;
             pinned_block_id = pinned_num_of_blocks - 1;
             pinned_index = 0;
