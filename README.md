@@ -28,13 +28,13 @@ yolov4和darknetv4的区别讲完了。
     [net参数](https://github.com/AlexeyAB/darknet/wiki/CFG-Parameters-in-the-%5Bnet%5D-section)
     
 ## 已注释代码
-1.主函数。（darknet.c）
-2.训练，测试，计算map（detector.c)
-3.加载cfg文件函数（parser.c)
-4.加载网络。（network.c)(包括卷积，池化，下采样，上采样，route，shorcut，yolo等）
-5.最重要的损失函数。(yolo_layer.c)
-6.iou,ciou，giou,diou,以及改进的iog（box.c)
-7.NMS。
+1.主函数。（darknet.c）  
+2.训练，测试，计算map（detector.c)  
+3.加载cfg文件函数（parser.c)  
+4.加载网络。（network.c)(包括卷积，池化，下采样，上采样，route，shorcut，yolo等）  
+5.最重要的损失函数。(yolo_layer.c)  
+6.iou,ciou，giou,diou,以及改进的iog（box.c)  
+7.NMS。  
  
 ## 我的一些小改动
 1.对检测到的目标进行计数。  
@@ -42,7 +42,7 @@ yolov4和darknetv4的区别讲完了。
 3.[提交了一些准备训练数据的脚本](https://github.com/xiaoxiaopeng1998/darknet/tree/xiaoPeng/scripts/%E8%AE%AD%E7%BB%83%E5%87%86%E5%A4%87)     
 4.
    * 保存日志命令：`darknet.exe detector train cfg/coco.data cfg/yolov4.cfg yolov4.conv.137 >> log/yolov4-train.log`       
-   * [可视化loss，绘制matlab图片](https://github.com/xiaoxiaopeng1998/darknet/tree/xiaoPeng/scripts/%E5%8F%AF%E8%A7%86%E5%8C%96)
+   * [可视化loss，绘制matlab图片](https://github.com/SpongeBab/yolo_data_scripts/tree/master/v4loss%E5%8F%AF%E8%A7%86%E5%8C%96)
 
 
 对理解程序有帮助的issues：
