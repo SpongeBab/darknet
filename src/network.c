@@ -273,7 +273,7 @@ void forward_network(network net, network_state state)
     for(i = 0; i < net.n; ++i){
         state.index = i;
         layer l = net.layers[i];
-        if(l.delta && state.train){
+        if(l.delta && state.train && l.train){
             scal_cpu(l.outputs * l.batch, 0, l.delta, 1);
         }
         //double time = get_time_point();
@@ -297,6 +297,7 @@ void update_network(network net)
     float rate = get_current_rate(net);
     for(i = 0; i < net.n; ++i){
         layer l = net.layers[i];
+        if (l.train == 0) continue;
         if(l.update){
             l.update(l, update_batch, rate, net.momentum, net.decay);
         }
@@ -638,7 +639,7 @@ int resize_network(network *net, int w, int h)
             resize_cost_layer(&l, inputs);
         }else{
             fprintf(stderr, "Resizing type %d \n", (int)l.type);
-            error("Cannot resize this type of layer");
+            error("Cannot resize this type of layer", DARKNET_LOC);
         }
         if(l.workspace_size > workspace_size) workspace_size = l.workspace_size;
         inputs = l.outputs;
@@ -1458,6 +1459,7 @@ void copy_weights_net(network net_train, network *net_map)
         }
         net_map->layers[k].batch = 1;
         net_map->layers[k].steps = 1;
+        net_map->layers[k].train = 0;
     }
 }
 
