@@ -6,6 +6,7 @@
 这个项目是对AlexeyAB版darknet源代码的分析。本项目基于/hgpvision/darknet的[项目](https://github.com/hgpvision/darknet) 感谢👏。虽然已不再更新，但是也非常厉害了。
 * 本项目最初的目的是对c版yolov4进行分析。
 * 逐步实现了repolusion_loss(已实现！[darknrt_with_repo](https://github.com/SpongeBab/darknet/tree/local)）
+    * 需要声明，经过我的实现，我发现repulsion_loss不适合一阶段检测器，只适合Two-stage检测器。详细信息可以阅读我的这篇[博客](https://blog.csdn.net/weixin_40557160/article/details/116174316).
 
 # TODO
 1.repulison_loss （done) [Paper]（https://arxiv.org/abs/1711.07752）
