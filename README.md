@@ -8,7 +8,7 @@
 * 逐步实现了repolusion_loss(已实现！[darknrt_with_repo](https://github.com/SpongeBab/darknet/tree/local)）
   需要声明，经过我的实现，我发现repulsion_loss不适合一阶段检测器，只适合Two-stage检测器。详细信息可以阅读我的这篇[博客](https://blog.csdn.net/weixin_40557160/article/details/116174316).
 
-# TODO
+### TODO
 1.repulison_loss （done) [Paper]（https://arxiv.org/abs/1711.07752）
 
 ---
